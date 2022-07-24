@@ -1,5 +1,8 @@
 package cl.desafiolatam.contactmanager.model;
 
+import org.springframework.stereotype.Component;
+
+@Component("contact")
 public class Contact {
 
 	private int id;
