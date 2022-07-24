@@ -11,48 +11,34 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import cl.desafiolatam.contactmanager.model.Contact;
+import cl.desafiolatam.contactmanager.service.ContactService;
+import cl.desafiolatam.contactmanager.service.impl.ContactServiceImpl;
 
 @Controller
 @RequestMapping(value="/contactManager", method=RequestMethod.GET)
 public class ContactController {
 	
-	private List<Contact> contactList;
-	private int idToContact = 0;
+	private ContactService contactService;
 	
 	public ContactController() {
-		contactList = new ArrayList<>();
+		super();
+		contactService = new ContactServiceImpl();
 	}
 	
 	@RequestMapping(value="/home", method=RequestMethod.GET)
 	public String getContactlist(ModelMap model) {
-		model.put("contactList", contactList);
+		model.addAttribute("contactList", contactService.getContactList());
 		return "contactManager";
 	}
 	
 	@RequestMapping(value="/addContact", method=RequestMethod.POST)
 	public String addContact(ModelMap model, @ModelAttribute("contactForm")Contact contact) {
-
-		contact.setId(idToContact);
-		contactList.add(contact);
-		idToContact++;
-//		model.put("contactList", contactList);
-
-//		return "contactManager";
-		return "redirect:/contactManager/home";
+		return contactService.addContact(model, contact);
 	}
 	
 	@RequestMapping(value="/deleteContact", method=RequestMethod.GET)
 	public String deleteContact(ModelMap model, @RequestParam("id") int idToDelete) {
-		List<Contact> contactListTemp = contactList;
-		
-		for (Contact contactTemp : contactListTemp) {
-			if(contactTemp.getId() == idToDelete) {
-				contactList.remove(contactTemp);
-			}
-		}
-//		model.put("contactList", contactList);
-//		return "contactManager";
-		return "redirect:/contactManager/home";
+		return contactService.deleteContact(model, idToDelete);
 	}
 	
 }
